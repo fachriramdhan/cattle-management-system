@@ -1,4 +1,4 @@
-# 🐄 Cattle Management System - Sistem Informasi Manajemen Sapi Perah
+# 🐄 Cattle Management System 
 
 <div align="center">
 
