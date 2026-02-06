@@ -606,9 +606,8 @@ SOFTWARE.
 
 **Your Name**
 
-- GitHub: [@yourusername](https://github.com/fachriramdhan)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/fachriramdhan)
-- Email: your.email@example.com
+- GitHub: [@fachriramdhan](https://github.com/fachriramdhan)
+- LinkedIn: [fachriramdhan](https://linkedin.com/in/fachriramdhan)
 
 ---
 
