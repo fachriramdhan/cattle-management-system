@@ -511,49 +511,6 @@ Kontribusi sangat diterima! Silakan ikuti langkah berikut:
 
 ---
 
-## 🐛 Bug Reports & Feature Requests
-
-Jika Anda menemukan bug atau ingin request fitur baru, silakan buat [Issue](https://github.com/username/sim-sapi/issues) dengan format:
-
-### Bug Report
-
-```
-**Describe the bug:**
-Penjelasan singkat tentang bug
-
-**To Reproduce:**
-1. Go to '...'
-2. Click on '...'
-3. Scroll down to '...'
-4. See error
-
-**Expected behavior:**
-Penjelasan tentang behavior yang diharapkan
-
-**Screenshots:**
-Jika applicable, tambahkan screenshots
-
-**Environment:**
-- OS: [e.g. macOS, Windows]
-- Browser: [e.g. Chrome, Safari]
-- Version: [e.g. 22]
-```
-
-### Feature Request
-
-```
-**Is your feature request related to a problem?**
-Penjelasan tentang problem
-
-**Describe the solution you'd like**
-Penjelasan tentang solusi yang diinginkan
-
-**Additional context**
-Context atau screenshot tambahan
-```
-
----
-
 ## 📝 Changelog
 
 ### Version 1.0.0 (2026-01-12)
@@ -569,36 +526,6 @@ Context atau screenshot tambahan
 - ✅ PDF Report Generation
 - ✅ Auto Audit Trail
 - ✅ Role-based Access Control
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-```
-MIT License
-
-Copyright (c) 2026 
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
 
 ---
 
