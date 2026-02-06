@@ -544,6 +544,5 @@ ConnectionStrings__DefaultConnection="Server=prod-server;Database=db_simsapi;Use
 
 **Dibuat dengan ❤️ untuk meningkatkan efisiensi peternakan sapi perah di Indonesia**
 
-[⬆ Kembali ke atas](#-sim-sapi---sistem-informasi-manajemen-sapi-perah)
 
 </div>
