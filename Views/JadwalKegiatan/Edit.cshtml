@@ -1,0 +1,138 @@
+@model SimSapi.Models.JadwalKegiatan
+@{
+    ViewData["Title"] = "Edit Jadwal Kegiatan";
+}
+
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="bg-orange-100 rounded-full p-4">
+                <i class="fas fa-calendar-edit text-orange-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800">Edit Jadwal Kegiatan</h3>
+                <p class="text-gray-600 text-sm">Update informasi jadwal kegiatan</p>
+            </div>
+        </div>
+        
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedBy" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6"></div>
+            
+            <!-- Informasi Kegiatan -->
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-purple-600"></i>
+                    Informasi Kegiatan
+                </h4>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="NamaKegiatan" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-heading text-gray-400"></i> Nama Kegiatan
+                </label>
+                <input asp-for="NamaKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                <span asp-validation-for="NamaKegiatan" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Deskripsi" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-align-left text-gray-400"></i> Deskripsi
+                </label>
+                <textarea asp-for="Deskripsi" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                <span asp-validation-for="Deskripsi" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="JenisKegiatan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-tag text-gray-400"></i> Jenis Kegiatan
+                    </label>
+                    <select asp-for="JenisKegiatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="Umum">Umum</option>
+                        <option value="Vaksinasi">Vaksinasi</option>
+                        <option value="Pelatihan">Pelatihan</option>
+                        <option value="Rapat">Rapat</option>
+                        <option value="Pemeriksaan">Pemeriksaan Kesehatan</option>
+                        <option value="Sosialisasi">Sosialisasi</option>
+                    </select>
+                    <span asp-validation-for="JenisKegiatan" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="Status" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-check-circle text-gray-400"></i> Status
+                    </label>
+                    <select asp-for="Status" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <option value="Terjadwal">Terjadwal</option>
+                        <option value="Berlangsung">Berlangsung</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Dibatalkan">Dibatalkan</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <!-- Waktu & Lokasi -->
+            <div class="border-b border-gray-200 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-clock text-purple-600"></i>
+                    Waktu & Lokasi
+                </h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="TanggalMulai" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-calendar-day text-gray-400"></i> Tanggal & Waktu Mulai
+                    </label>
+                    <input asp-for="TanggalMulai" type="datetime-local" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    <span asp-validation-for="TanggalMulai" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="TanggalSelesai" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-calendar-check text-gray-400"></i> Tanggal & Waktu Selesai
+                    </label>
+                    <input asp-for="TanggalSelesai" type="datetime-local" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    <span asp-validation-for="TanggalSelesai" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label asp-for="Lokasi" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-map-marker-alt text-gray-400"></i> Lokasi
+                    </label>
+                    <input asp-for="Lokasi" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    <span asp-validation-for="Lokasi" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="PenanggungJawab" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user-tie text-gray-400"></i> Penanggung Jawab
+                    </label>
+                    <input asp-for="PenanggungJawab" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                    <span asp-validation-for="PenanggungJawab" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-lg transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-save"></i>
+                    Update Jadwal
+                </button>
+                <a asp-action="Index" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-times"></i>
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

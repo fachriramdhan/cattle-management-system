@@ -1,0 +1,221 @@
+@model SimSapi.Models.KesehatanSapi
+@{
+    ViewData["Title"] = "Tambah Riwayat Kesehatan";
+}
+
+<div class="max-w-5xl mx-auto">
+    <div class="bg-white rounded-lg shadow-md p-8">
+        <div class="flex items-center gap-4 mb-6">
+            <div class="bg-red-100 rounded-full p-4">
+                <i class="fas fa-heartbeat text-red-600 text-2xl"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-gray-800">Tambah Riwayat Kesehatan Sapi</h3>
+                <p class="text-gray-600 text-sm">Input data pemeriksaan, vaksinasi, atau pengobatan</p>
+            </div>
+        </div>
+        
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg mb-6"></div>
+            
+            <!-- Informasi Dasar -->
+            <div class="border-b border-gray-200 pb-4 mb-6">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-red-600"></i>
+                    Informasi Dasar
+                </h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="SapiId" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-cow text-gray-400"></i> Pilih Sapi
+                    </label>
+                    <select asp-for="SapiId" asp-items="ViewBag.SapiId" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="">-- Pilih Sapi --</option>
+                    </select>
+                    <span asp-validation-for="SapiId" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="TanggalPemeriksaan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-calendar text-gray-400"></i> Tanggal Pemeriksaan
+                    </label>
+                    <input asp-for="TanggalPemeriksaan" type="datetime-local" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <span asp-validation-for="TanggalPemeriksaan" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="JenisPemeriksaan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-stethoscope text-gray-400"></i> Jenis Pemeriksaan
+                    </label>
+                    <select asp-for="JenisPemeriksaan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="0">Pemeriksaan Rutin</option>
+                        <option value="1">Vaksinasi</option>
+                        <option value="2">Pengobatan</option>
+                        <option value="3">Pemeriksaan Kebuntingan</option>
+                        <option value="4">Pemeriksaan Pasca Melahirkan</option>
+                        <option value="5">Pemeriksaan Darurat</option>
+                        <option value="6">Kastrasi</option>
+                        <option value="99">Lainnya</option>
+                    </select>
+                    <span asp-validation-for="JenisPemeriksaan" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="StatusKesehatan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-check-circle text-gray-400"></i> Status Kesehatan
+                    </label>
+                    <select asp-for="StatusKesehatan" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <option value="Sehat">Sehat</option>
+                        <option value="Sakit">Sakit</option>
+                        <option value="Dalam Perawatan">Dalam Perawatan</option>
+                        <option value="Sembuh">Sembuh</option>
+                    </select>
+                    <span asp-validation-for="StatusKesehatan" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <!-- Diagnosa & Gejala -->
+            <div class="border-b border-gray-200 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-diagnoses text-red-600"></i>
+                    Diagnosa & Gejala
+                </h4>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Diagnosa" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-clipboard-list text-gray-400"></i> Diagnosa
+                </label>
+                <input asp-for="Diagnosa" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Contoh: Mastitis, Demam, Sehat" />
+                <span asp-validation-for="Diagnosa" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Gejala" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-notes-medical text-gray-400"></i> Gejala
+                </label>
+                <textarea asp-for="Gejala" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Jelaskan gejala yang tampak..."></textarea>
+                <span asp-validation-for="Gejala" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <!-- Tindakan & Pengobatan -->
+            <div class="border-b border-gray-200 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-pills text-red-600"></i>
+                    Tindakan & Pengobatan
+                </h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                    <label asp-for="NamaDokter" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-user-md text-gray-400"></i> Nama Dokter/Petugas
+                    </label>
+                    <input asp-for="NamaDokter" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="dr. John Doe" />
+                    <span asp-validation-for="NamaDokter" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="BiayaPengobatan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-money-bill text-gray-400"></i> Biaya Pengobatan (Rp)
+                    </label>
+                    <input asp-for="BiayaPengobatan" type="number" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0" />
+                    <span asp-validation-for="BiayaPengobatan" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Tindakan" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-hand-holding-medical text-gray-400"></i> Tindakan yang Dilakukan
+                </label>
+                <textarea asp-for="Tindakan" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Contoh: Injeksi antibiotik, Perawatan luka..."></textarea>
+                <span asp-validation-for="Tindakan" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <div class="mb-4">
+                <label asp-for="Obat" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-pills text-gray-400"></i> Obat yang Diberikan
+                </label>
+                <textarea asp-for="Obat" rows="2" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Contoh: Amoxicillin 500mg 3x sehari, Vitamin B Complex..."></textarea>
+                <span asp-validation-for="Obat" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <!-- Data Vital -->
+            <div class="border-b border-gray-200 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-gray-700 flex items-center gap-2">
+                    <i class="fas fa-chart-line text-red-600"></i>
+                    Data Vital & Follow Up
+                </h4>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                    <label asp-for="BeratBadan" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-weight text-gray-400"></i> Berat Badan (Kg)
+                    </label>
+                    <input asp-for="BeratBadan" type="number" step="0.01" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="0.00" />
+                    <span asp-validation-for="BeratBadan" class="text-red-600 text-sm"></span>
+                </div>
+                
+                <div>
+                    <label asp-for="SuhuTubuh" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-thermometer-half text-gray-400"></i> Suhu Tubuh (°C)
+                    </label>
+                    <input asp-for="SuhuTubuh" type="number" step="0.1" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="38.5" />
+                    <span asp-validation-for="SuhuTubuh" class="text-red-600 text-sm"></span>
+                    <p class="text-xs text-gray-500 mt-1">Normal: 38.0 - 39.5°C</p>
+                </div>
+                
+                <div>
+                    <label asp-for="TanggalKontrol" class="block text-gray-700 font-medium mb-2">
+                        <i class="fas fa-calendar-check text-gray-400"></i> Jadwal Kontrol
+                    </label>
+                    <input asp-for="TanggalKontrol" type="date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" />
+                    <span asp-validation-for="TanggalKontrol" class="text-red-600 text-sm"></span>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label asp-for="Catatan" class="block text-gray-700 font-medium mb-2">
+                    <i class="fas fa-sticky-note text-gray-400"></i> Catatan Tambahan
+                </label>
+                <textarea asp-for="Catatan" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Catatan lainnya..."></textarea>
+                <span asp-validation-for="Catatan" class="text-red-600 text-sm"></span>
+            </div>
+            
+            <!-- Info Box -->
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-6">
+                <div class="flex items-start">
+                    <i class="fas fa-info-circle text-blue-500 mt-1 mr-3"></i>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">Informasi:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Status sapi akan otomatis diupdate berdasarkan status kesehatan</li>
+                            <li>Jika status kesehatan "Sakit" atau "Dalam Perawatan", status sapi berubah jadi "Sakit"</li>
+                            <li>Jika status kesehatan "Sembuh", status sapi berubah jadi "Aktif"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-4">
+                <button type="submit" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-save"></i>
+                    Simpan Riwayat
+                </button>
+                <a asp-action="Index" class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 py-3 rounded-lg transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-times"></i>
+                    Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

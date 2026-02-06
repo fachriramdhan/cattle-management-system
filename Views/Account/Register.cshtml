@@ -1,0 +1,110 @@
+@model SimSapi.ViewModels.RegisterViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - SIM SAPI</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkSoft: '#1a1f2b',
+                        accentBlue: '#38bdf8',
+                        accentPink: '#f472b6',
+                        textSoft: '#cbd5e1',
+                        borderSoft: '#334155'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="min-h-screen bg-darkSoft flex items-center justify-center px-4">
+
+    <div class="w-full max-w-md bg-darkSoft/90 backdrop-blur-md border border-borderSoft rounded-3xl shadow-lg p-6 sm:p-8">
+
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-accentBlue to-accentPink flex items-center justify-center shadow-md">
+                <i class="fas fa-user-plus text-white text-4xl"></i>
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-bold text-textSoft mt-4">Daftar Akun Baru</h1>
+            <p class="text-textSoft/70 mt-1 text-sm sm:text-base">Bergabung dengan SIM-SAPI</p>
+        </div>
+
+        <!-- Form -->
+        <div>
+            <form asp-action="Register" method="post" class="space-y-5">
+
+                <div asp-validation-summary="All" class="text-red-400 text-sm"></div>
+
+                <!-- Nama Lengkap -->
+                <div>
+                    <label asp-for="NamaLengkap" class="block text-textSoft mb-1">Nama Lengkap</label>
+                    <input asp-for="NamaLengkap"
+                           class="w-full bg-darkSoft text-textSoft px-4 py-3 rounded-xl border border-borderSoft focus:outline-none focus:ring-1 focus:ring-accentBlue focus:border-accentBlue transition-colors duration-200"
+                           placeholder="John Doe" />
+                    <span asp-validation-for="NamaLengkap" class="text-red-400 text-sm"></span>
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label asp-for="Email" class="block text-textSoft mb-1">Email</label>
+                    <input asp-for="Email"
+                           class="w-full bg-darkSoft text-textSoft px-4 py-3 rounded-xl border border-borderSoft focus:outline-none focus:ring-1 focus:ring-accentBlue focus:border-accentBlue transition-colors duration-200"
+                           placeholder="email@example.com" />
+                    <span asp-validation-for="Email" class="text-red-400 text-sm"></span>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label asp-for="Password" class="block text-textSoft mb-1">Password</label>
+                    <input asp-for="Password" type="password"
+                           class="w-full bg-darkSoft text-textSoft px-4 py-3 rounded-xl border border-borderSoft focus:outline-none focus:ring-1 focus:ring-accentPink focus:border-accentPink transition-colors duration-200"
+                           placeholder="Minimal 6 karakter" />
+                    <span asp-validation-for="Password" class="text-red-400 text-sm"></span>
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label asp-for="ConfirmPassword" class="block text-textSoft mb-1">Konfirmasi Password</label>
+                    <input asp-for="ConfirmPassword" type="password"
+                           class="w-full bg-darkSoft text-textSoft px-4 py-3 rounded-xl border border-borderSoft focus:outline-none focus:ring-1 focus:ring-accentPink focus:border-accentPink transition-colors duration-200"
+                           placeholder="Ulangi password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-red-400 text-sm"></span>
+                </div>
+
+                <!-- Button Daftar -->
+                <button type="submit"
+                        class="w-full py-3 rounded-xl bg-gradient-to-r from-accentBlue to-accentPink text-white font-semibold tracking-wide hover:opacity-90 transition-opacity duration-200 flex justify-center items-center gap-2">
+                    <i class="fas fa-user-plus"></i>
+                    Daftar
+                </button>
+            </form>
+
+            <!-- Link Login -->
+            <div class="mt-6 text-center">
+                <p class="text-textSoft/70 text-sm">Sudah punya akun?</p>
+                <a asp-action="Login" class="text-accentBlue hover:text-accentPink font-medium transition-colors">Masuk Sekarang</a>
+            </div>
+
+        </div>
+    </div>
+
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+
+</body>
+</html>

@@ -1,0 +1,583 @@
+ARSITEKTUR SISTEM
+
+1. POLA ARSITEKTUR: MVC (Model-View-Controller)
+
+┌─────────────────────────────────────────────────────────┐
+│                    USER INTERFACE                        │
+│                  (Browser / Client)                      │
+└────────────────────────┬────────────────────────────────┘
+                         │ HTTP Request
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│                  ASP.NET CORE MVC                        │
+│  ┌──────────┐    ┌──────────┐    ┌──────────────┐      │
+│  │  ROUTING │───▶│CONTROLLER│───▶│     VIEW     │      │
+│  └──────────┘    └────┬─────┘    └──────────────┘      │
+│                       │                                  │
+│                       ▼                                  │
+│              ┌────────────────┐                          │
+│              │     MODEL      │                          │
+│              │  (Entities)    │                          │
+│              └────────┬───────┘                          │
+└───────────────────────┼──────────────────────────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────┐
+│            ENTITY FRAMEWORK CORE (ORM)                   │
+│              - DbContext                                 │
+│              - Migration                                 │
+│              - Change Tracking                           │
+└────────────────────────┬────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────┐
+│                  DATABASE (MySQL)                        │
+│   - Sapi                - ProduksiOlahan                 │
+│   - ProduksiSusu        - KesehatanSapi                  │
+│   - Peternak            - JadwalKegiatan                 │
+│   - Users (Identity)    - ActivityLogs                   │
+└─────────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+ALUR KERJA SISTEM (REQUEST-RESPONSE CYCLE)
+Contoh: User Menambah Data Sapi
+1. USER ACTION
+   └─ User mengisi form "Tambah Sapi" dan klik tombol "Simpan"
+
+2. BROWSER
+   └─ Mengirim HTTP POST request ke: /Sapi/Create
+      Body: { KodeSapi: "SP-001", NamaSapi: "Bella", ... }
+
+3. ROUTING
+   └─ ASP.NET Core routing mencocokkan URL dengan Controller & Action
+      URL: /Sapi/Create → SapiController.Create()
+
+4. CONTROLLER
+   ┌─────────────────────────────────────────────────────┐
+   │ SapiController.Create(Sapi sapi)                    │
+   │                                                      │
+   │ A. VALIDASI                                          │
+   │    if (ModelState.IsValid) { ... }                  │
+   │                                                      │
+   │ B. BUSINESS LOGIC                                    │
+   │    - Set UserId = current logged in user            │
+   │    - sapi.UserId = userId;                          │
+   │                                                      │
+   │ C. DATABASE OPERATION                                │
+   │    - _context.Add(sapi);                            │
+   │    - await _context.SaveChangesAsync();             │
+   │                                                      │
+   │ D. AUTO AUDIT LOG (Intercepted)                     │
+   │    - ApplicationDbContext.SaveChanges()             │
+   │    - LogChanges() method dipanggil otomatis         │
+   │    - Insert ke tabel ActivityLogs                   │
+   │                                                      │
+   │ E. REDIRECT                                          │
+   │    - TempData["SuccessMessage"] = "Berhasil"        │
+   │    - return RedirectToAction("Index");              │
+   └─────────────────────────────────────────────────────┘
+
+5. ENTITY FRAMEWORK CORE
+   ┌─────────────────────────────────────────────────────┐
+   │ A. Change Tracking                                   │
+   │    - EF mendeteksi sapi entity baru (EntityState.Added) │
+   │                                                      │
+   │ B. Generate SQL                                      │
+   │    INSERT INTO Sapi (KodeSapi, NamaSapi, ...)       │
+   │    VALUES ('SP-001', 'Bella', ...);                 │
+   │                                                      │
+   │ C. Execute to Database                               │
+   │    - Kirim query ke MySQL via Pomelo provider       │
+   └─────────────────────────────────────────────────────┘
+
+6. DATABASE (MySQL)
+   └─ Eksekusi INSERT statement
+   └─ Return success/error
+   └─ Auto-increment ID generated
+
+7. RESPONSE
+   └─ Controller redirect ke /Sapi/Index
+   └─ Index action menampilkan View dengan data terbaru
+   └─ TempData trigger SweetAlert success notification
+
+8. BROWSER
+   └─ Tampilkan halaman Index Sapi
+   └─ Muncul popup "Data sapi berhasil ditambahkan"
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+SISTEM AUTHENTICATION & AUTHORIZATION
+Flow Login User:
+1. USER SUBMIT LOGIN FORM
+   └─ Email: user@simsapi.com
+   └─ Password: User123
+
+2. AccountController.Login(LoginViewModel model)
+   ┌─────────────────────────────────────────────────────┐
+   │ A. FIND USER                                         │
+   │    var user = await _userManager.FindByEmailAsync() │
+   │                                                      │
+   │ B. CHECK USER ACTIVE                                 │
+   │    if (!user.IsActive) → Reject                     │
+   │                                                      │
+   │ C. VERIFY PASSWORD                                   │
+   │    var result = await _signInManager.PasswordSignInAsync() │
+   │                                                      │
+   │ D. CREATE AUTHENTICATION COOKIE                      │
+   │    - ASP.NET Core Identity creates encrypted cookie │
+   │    - Cookie contains: UserId, UserName, Roles       │
+   │                                                      │
+   │ E. REDIRECT TO DASHBOARD                             │
+   │    return RedirectToAction("Index", "Dashboard");   │
+   └─────────────────────────────────────────────────────┘
+
+3. SETIAP REQUEST SELANJUTNYA
+   ┌─────────────────────────────────────────────────────┐
+   │ Browser mengirim Cookie di Header                    │
+   │ ↓                                                    │
+   │ ASP.NET Core Middleware membaca Cookie               │
+   │ ↓                                                    │
+   │ Decrypt & Validate Cookie                            │
+   │ ↓                                                    │
+   │ Set User.Identity (ClaimsPrincipal)                  │
+   │ - User.FindFirstValue(ClaimTypes.NameIdentifier)    │
+   │ - User.IsInRole("Admin")                            │
+   │ ↓                                                    │
+   │ Controller Action dapat akses User info              │
+   └─────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------------------------------------------------------------------   
+
+   Data Isolation (Role-based Access):
+
+   USER ROLE:
+┌─────────────────────────────────────────────────────┐
+│ Query Sapi:                                          │
+│ var query = _context.Sapi.AsQueryable();            │
+│                                                      │
+│ if (!isAdmin) {                                      │
+│     query = query.Where(s => s.UserId == userId);   │
+│ }                                                    │
+│                                                      │
+│ Result:                                              │
+│ - User hanya lihat sapi miliknya sendiri            │
+│ - Admin lihat semua sapi dari semua user            │
+└─────────────────────────────────────────────────────┘
+
+ADMIN ROLE:
+┌─────────────────────────────────────────────────────┐
+│ Query Sapi:                                          │
+│ var query = _context.Sapi.AsQueryable();            │
+│ // Tidak ada filter UserId                          │
+│                                                      │
+│ Result:                                              │
+│ - Admin lihat SEMUA data                            │
+│ - Bisa edit/hapus data siapa saja                   │
+└─────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+DATABASE SCHEMA & RELASI
+┌──────────────────┐
+│  AspNetUsers     │ (Identity - Built-in)
+│──────────────────│
+│ Id (PK)          │───┐
+│ Email            │   │
+│ PasswordHash     │   │
+│ NamaLengkap      │   │
+│ IsActive         │   │
+│ PeternakId (FK)  │─┐ │
+└──────────────────┘ │ │
+                     │ │
+┌──────────────────┐ │ │
+│    Peternak      │ │ │
+│──────────────────│ │ │
+│ Id (PK)          │◄┘ │
+│ KodePeternak     │   │
+│ NamaLengkap      │   │
+│ Alamat           │   │
+│ UserId (FK)      │───┤
+└──────────────────┘   │
+                       │
+┌──────────────────┐   │
+│      Sapi        │   │
+│──────────────────│   │
+│ Id (PK)          │   │
+│ KodeSapi         │   │
+│ NamaSapi         │   │
+│ UserId (FK)      │◄──┘
+└────────┬─────────┘
+         │
+         │ 1:N
+         │
+    ┌────┴─────────────────────┬───────────────────┐
+    │                          │                   │
+    ▼                          ▼                   ▼
+┌──────────────┐   ┌──────────────────┐  ┌──────────────────┐
+│ProduksiSusu  │   │ KesehatanSapi    │  │ (Sapi relation)  │
+│──────────────│   │──────────────────│  └──────────────────┘
+│ Id (PK)      │   │ Id (PK)          │
+│ SapiId (FK)  │───│ SapiId (FK)      │
+│ VolumeLiter  │   │ Diagnosa         │
+│ WaktuPerah   │   │ StatusKesehatan  │
+│ Tanggal      │   │ BiayaPengobatan  │
+│ UserId       │   │ UserId           │
+└──────────────┘   └──────────────────┘
+
+┌──────────────────┐
+│ ProduksiOlahan   │
+│──────────────────│
+│ Id (PK)          │
+│ NamaProduk       │
+│ JenisOlahan      │
+│ JumlahProduksi   │
+│ HargaJual        │
+│ UserId (FK)      │
+└──────────────────┘
+
+┌──────────────────┐       ┌──────────────────┐
+│ JadwalKegiatan   │       │ PesertaKegiatan  │
+│──────────────────│       │──────────────────│
+│ Id (PK)          │◄──┐   │ Id (PK)          │
+│ NamaKegiatan     │   └───│ JadwalKegiatanId │
+│ TanggalMulai     │       │ UserId (FK)      │
+│ Status           │       │ Hadir            │
+└──────────────────┘       └──────────────────┘
+                           (Many-to-Many via Junction)
+
+┌──────────────────┐
+│  ActivityLogs    │ (Audit Trail)
+│──────────────────│
+│ Id (PK)          │
+│ UserId           │
+│ EntityName       │ (Sapi, ProduksiSusu, etc)
+│ Action           │ (Added, Modified, Deleted)
+│ OldData (JSON)   │
+│ NewData (JSON)   │
+│ Timestamp        │
+└──────────────────┘
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+SISTEM AUDIT LOG (Auto Tracking)
+Cara Kerja:
+
+// ApplicationDbContext.cs
+public override async Task<int> SaveChangesAsync(...)
+{
+    LogChanges(); // ← Dipanggil SEBELUM save ke database
+    return await base.SaveChangesAsync(cancellationToken);
+}
+
+private void LogChanges()
+{
+    var userId = _httpContextAccessor.HttpContext.User
+        .FindFirstValue(ClaimTypes.NameIdentifier);
+
+    // Ambil semua entity yang berubah
+    var entries = ChangeTracker.Entries()
+        .Where(e => e.Entity is Sapi || e.Entity is ProduksiSusu)
+        .Where(e => e.State == EntityState.Added || 
+                   e.State == EntityState.Modified || 
+                   e.State == EntityState.Deleted);
+
+    foreach (var entry in entries)
+    {
+        var log = new ActivityLog
+        {
+            UserId = userId,
+            EntityName = entry.Entity.GetType().Name,
+            Action = entry.State.ToString(),
+            Timestamp = DateTime.Now
+        };
+
+        if (entry.State == EntityState.Modified)
+        {
+            // Simpan data LAMA dan BARU dalam JSON
+            log.OldData = JsonConvert.SerializeObject(entry.OriginalValues);
+            log.NewData = JsonConvert.SerializeObject(entry.CurrentValues);
+        }
+        
+        ActivityLogs.Add(log);
+    }
+}
+
+
+CONTOH LOG ENTRY:
+{
+  "Id": 1,
+  "UserId": "abc123",
+  "EntityName": "Sapi",
+  "Action": "Modified",
+  "OldData": "{\"NamaSapi\":\"Bella\",\"StatusSapi\":\"Aktif\"}",
+  "NewData": "{\"NamaSapi\":\"Bella\",\"StatusSapi\":\"Sakit\"}",
+  "Timestamp": "2026-01-12 10:30:00"
+}
+```
+
+---
+
+## 📄 SISTEM LAPORAN PDF (QuestPDF)
+
+### **Flow Generate PDF:**
+```
+1. USER KLIK "GENERATE PDF"
+   └─ Form: StartDate = 01/01/2026, EndDate = 31/01/2026
+
+2. ReportController.GeneratePDF(startDate, endDate)
+   ┌─────────────────────────────────────────────────────┐
+   │ A. QUERY DATA                                        │
+   │    var data = await _context.ProduksiSusu           │
+   │        .Include(p => p.Sapi)                        │
+   │        .Where(p => p.Tanggal >= startDate &&        │
+   │                   p.Tanggal <= endDate)             │
+   │        .ToListAsync();                              │
+   │                                                      │
+   │ B. CALL REPORT SERVICE                               │
+   │    var pdfBytes = _reportService                    │
+   │        .GenerateProduksiReport(data, ...);          │
+   │                                                      │
+   │ C. RETURN FILE                                       │
+   │    return File(pdfBytes, "application/pdf", ...);   │
+   └─────────────────────────────────────────────────────┘
+
+3. ReportService.GenerateProduksiReport(...)
+   ┌─────────────────────────────────────────────────────┐
+   │ QuestPDF Fluent API:                                 │
+   │                                                      │
+   │ Document.Create(container => {                       │
+   │     container.Page(page => {                         │
+   │         page.Header() → Judul Laporan               │
+   │         page.Content() → Tabel Data                 │
+   │         page.Footer() → Nomor Halaman               │
+   │     });                                             │
+   │ });                                                  │
+   │                                                      │
+   │ return document.GeneratePdf();                       │
+   └─────────────────────────────────────────────────────┘
+
+4. BROWSER
+   └─ Download file: Laporan_Produksi_20260101_20260131.pdf
+```
+
+---
+
+## 🗓️ SISTEM JADWAL KEGIATAN
+
+### **Flow Pendaftaran Kegiatan:**
+```
+1. USER MELIHAT JADWAL
+   └─ /JadwalKegiatan/Details/5
+
+2. USER KLIK "DAFTAR KEGIATAN"
+   └─ POST: /JadwalKegiatan/Daftar/5
+
+3. JadwalKegiatanController.Daftar(id)
+   ┌─────────────────────────────────────────────────────┐
+   │ A. CEK SUDAH DAFTAR?                                 │
+   │    var sudahDaftar = await _context.PesertaKegiatan │
+   │        .AnyAsync(p => p.JadwalKegiatanId == id &&   │
+   │                     p.UserId == userId);            │
+   │                                                      │
+   │ B. JIKA BELUM, INSERT                                │
+   │    var peserta = new PesertaKegiatan {              │
+   │        JadwalKegiatanId = id,                       │
+   │        UserId = userId,                             │
+   │        Hadir = false                                │
+   │    };                                               │
+   │    _context.PesertaKegiatan.Add(peserta);           │
+   │                                                      │
+   │ C. SAVE                                              │
+   │    await _context.SaveChangesAsync();               │
+   └─────────────────────────────────────────────────────┘
+
+4. ADMIN KELOLA KEHADIRAN
+   └─ Admin klik toggle "Hadir"
+   └─ POST: /JadwalKegiatan/Absen?id=5&userId=abc123
+   └─ Update: peserta.Hadir = !peserta.Hadir
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+AUTO-UPDATE STATUS SAPI (Business Logic)
+Ketika Input Kesehatan Sapi:
+// KesehatanSapiController.Create()
+
+// 1. Simpan data kesehatan
+kesehatan.UserId = userId;
+_context.Add(kesehatan);
+
+// 2. Update status sapi OTOMATIS
+var sapi = await _context.Sapi.FindAsync(kesehatan.SapiId);
+
+if (kesehatan.StatusKesehatan == "Sakit" || 
+    kesehatan.StatusKesehatan == "Dalam Perawatan")
+{
+    sapi.StatusSapi = "Sakit"; // ← Auto update
+}
+else if (kesehatan.StatusKesehatan == "Sembuh")
+{
+    sapi.StatusSapi = "Aktif"; // ← Auto update
+}
+
+await _context.SaveChangesAsync(); // Simpan keduanya sekaligus
+```
+
+---
+
+## 🎨 FRONTEND TEKNOLOGI
+
+### **Stack yang Digunakan:**
+```
+1. RAZOR PAGES (.cshtml)
+   - Server-side rendering
+   - C# code embedded dalam HTML
+   - @ syntax untuk interpolation
+
+2. TAILWIND CSS (via CDN)
+   - Utility-first CSS framework
+   - Responsive design
+   - No custom CSS needed
+
+3. FONT AWESOME (via CDN)
+   - Icon library
+   - 1000+ icons available
+
+4. CHART.JS (via CDN)
+   - Interactive charts
+   - Line, bar, pie charts
+
+5. SWEETALERT2 (via CDN)
+   - Beautiful alert dialogs
+   - Confirm dialogs
+```
+
+---
+
+## 🔧 DEPLOYMENT ARCHITECTURE
+```
+DEVELOPMENT (MacBook Pro):
+┌─────────────────────────────────────────┐
+│  VS Code                                 │
+│  ├─ .NET SDK 8.0                        │
+│  ├─ C# Extension                        │
+│  └─ dotnet run (Kestrel Server)        │
+└─────────────┬───────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────┐
+│  MAMP (MySQL Server)                     │
+│  ├─ MySQL Port: 8889                    │
+│  ├─ phpMyAdmin                          │
+│  └─ Database: db_simsapi                │
+└─────────────────────────────────────────┘
+
+PRODUCTION (Example):
+┌─────────────────────────────────────────┐
+│  Web Server (IIS / Nginx)                │
+│  └─ ASP.NET Core Runtime                │
+└─────────────┬───────────────────────────┘
+              │
+              ▼
+┌─────────────────────────────────────────┐
+│  MySQL Database Server                   │
+│  └─ Production Database                 │
+└─────────────────────────────────────────┘
+```
+
+---
+
+## 📊 SUMMARY CARA KERJA KESELURUHAN
+
+### **1. Ketika Aplikasi Dijalankan (`dotnet run`):**
+```
+A. Startup Sequence:
+   1. Load Configuration (appsettings.json)
+   2. Setup Dependency Injection (Services)
+   3. Configure Middleware Pipeline
+   4. Initialize Database Connection
+   5. Seed Initial Data (Admin, Roles)
+   6. Start Kestrel Web Server (Port 5000/5001)
+
+B. Middleware Pipeline (Setiap Request):
+   Request → Routing → Authentication → Authorization → Controller → Response
+```
+
+### **2. User Interaction Flow:**
+```
+USER → BROWSER → HTTP REQUEST → ROUTING → CONTROLLER
+                                              ↓
+                                        BUSINESS LOGIC
+                                              ↓
+                                    ENTITY FRAMEWORK CORE
+                                              ↓
+                                          DATABASE
+                                              ↓
+                                   RETURN DATA TO CONTROLLER
+                                              ↓
+                                         RENDER VIEW
+                                              ↓
+                                      HTML RESPONSE
+                                              ↓
+                                          BROWSER
+                                              ↓
+                                           USER
+```
+
+### **3. Key Features Integration:**
+```
+┌─────────────────────────────────────────────────────────┐
+│                  SIM-SAPI ECOSYSTEM                      │
+│                                                          │
+│  ┌──────────────┐    ┌──────────────┐                  │
+│  │ CRUD Sapi    │    │ Produksi     │                  │
+│  │              │───▶│ Susu         │                  │
+│  └──────────────┘    └──────────────┘                  │
+│         │                    │                          │
+│         ▼                    ▼                          │
+│  ┌──────────────┐    ┌──────────────┐                  │
+│  │ Kesehatan    │    │ Produksi     │                  │
+│  │ Sapi         │    │ Olahan       │                  │
+│  └──────────────┘    └──────────────┘                  │
+│         │                    │                          │
+│         └────────┬───────────┘                          │
+│                  ▼                                      │
+│           ┌──────────────┐                              │
+│           │ Activity Log │ (Auto Tracking)              │
+│           └──────────────┘                              │
+│                  │                                      │
+│                  ▼                                      │
+│           ┌──────────────┐                              │
+│           │  Dashboard   │ (Statistics)                 │
+│           └──────────────┘                              │
+│                                                          │
+│  ┌──────────────┐    ┌──────────────┐                  │
+│  │ Jadwal       │    │ Laporan PDF  │                  │
+│  │ Kegiatan     │    │ (QuestPDF)   │                  │
+│  └──────────────┘    └──────────────┘                  │
+│                                                          │
+│         ALL PROTECTED BY:                               │
+│         ┌──────────────────────┐                        │
+│         │  Authentication &    │                        │
+│         │  Authorization       │                        │
+│         │  (ASP.NET Identity)  │                        │
+│         └──────────────────────┘                        │
+└─────────────────────────────────────────────────────────┘
+
+------------------------------------------------------------------------------------------------------------------------------------
+
+KESIMPULAN SISTEM
+SIM-SAPI adalah sistem manajemen peternakan sapi yang:
+
+✅ Web-based - Diakses via browser
+✅ Multi-user - Admin & User dengan hak akses berbeda
+✅ Data Isolation - User hanya lihat data miliknya
+✅ Auto Audit - Semua perubahan tercatat otomatis
+✅ Responsive - Tampilan menyesuaikan device
+✅ Real-time - Data selalu up-to-date
+✅ Secure - Password hashed, role-based access
+✅ Integrated - Semua fitur saling terhubung
+✅ Reportable - Generate PDF laporan
+✅ Maintainable - Clean code, MVC pattern
+
+------------------------------------------------------------------------------------------------------------------------------------

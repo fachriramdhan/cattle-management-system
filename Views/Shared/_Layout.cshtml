@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SIM-SAPI</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- ChartJS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { font-family: Inter, system-ui, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background:#334155; border-radius:6px }
+    </style>
+</head>
+
+<body class="bg-slate-950 text-slate-200">
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="fixed inset-y-0 left-0 w-[260px]
+              bg-gradient-to-b from-slate-900 via-slate-900 to-blue-900
+              text-slate-100 z-50 shadow-2xl flex flex-col">
+
+    <!-- BRAND -->
+    <div class="px-5 py-5 flex items-center gap-3 border-b border-white/10">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400
+                    flex items-center justify-center text-slate-900 shadow-lg">
+            <i class="fas fa-cow text-xl"></i>
+        </div>
+        <div>
+            <p class="font-bold tracking-wide">SIM-SAPI</p>
+            <p class="text-xs text-slate-400">Smart Farm System</p>
+        </div>
+    </div>
+
+    <!-- USER -->
+    <div class="px-5 py-4 border-b border-white/10 flex items-center gap-3">
+        <div class="w-11 h-11 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500
+                    text-slate-900 flex items-center justify-center font-bold shadow">
+            @User.Identity?.Name?.Substring(0,1)
+        </div>
+
+        <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold truncate">@User.Identity?.Name</p>
+            <span class="inline-block mt-0.5 px-2 py-0.5 text-[10px] rounded-full
+                  @(User.IsInRole("Admin")
+                    ? "bg-purple-500/20 text-purple-300"
+                    : "bg-emerald-500/20 text-emerald-300")">
+                @(User.IsInRole("Admin") ? "ADMIN" : "PETERNAK")
+            </span>
+        </div>
+    </div>
+
+    <!-- MENU -->
+    <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+
+        <!-- DASHBOARD -->
+        <a asp-controller="Dashboard" asp-action="Index"
+           class="group relative flex items-center gap-3 px-4 py-2.5 rounded-lg transition
+           @(ViewContext.RouteData.Values["controller"]?.ToString()=="Dashboard"
+           ? "bg-blue-600/20 text-blue-400 shadow-inner"
+           : "hover:bg-white/10 text-slate-300")">
+            <span class="absolute left-0 top-0 h-full w-1 rounded-r
+                @(ViewContext.RouteData.Values["controller"]?.ToString()=="Dashboard"
+                ? "bg-blue-500"
+                : "bg-transparent group-hover:bg-white/20")"></span>
+            <i class="fas fa-home w-5"></i>
+            <span>Dashboard</span>
+        </a>
+
+        <!-- SAPI -->
+        <a asp-controller="Sapi" asp-action="Index"
+           class="group relative flex items-center gap-3 px-4 py-2.5 rounded-lg transition
+           @(ViewContext.RouteData.Values["controller"]?.ToString()=="Sapi"
+           ? "bg-blue-600/20 text-blue-400"
+           : "hover:bg-white/10 text-slate-300")">
+            <span class="absolute left-0 top-0 h-full w-1 rounded-r
+                @(ViewContext.RouteData.Values["controller"]?.ToString()=="Sapi"
+                ? "bg-blue-500"
+                : "bg-transparent group-hover:bg-white/20")"></span>
+            <i class="fas fa-cow w-5"></i>
+            <span>Kelola Sapi</span>
+        </a>
+
+        <!-- PRODUKSI -->
+        <div class="mt-4">
+            <p class="px-4 mb-2 text-xs uppercase tracking-widest text-slate-500">
+                Produksi
+            </p>
+
+            <a asp-controller="ProduksiSusu" asp-action="Index"
+               class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 transition">
+                <i class="fas fa-droplet w-5"></i>
+                <span>Susu</span>
+            </a>
+
+            <a asp-controller="ProduksiOlahan" asp-action="Index"
+               class="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 transition">
+                <i class="fas fa-cookie-bite w-5"></i>
+                <span>Olahan</span>
+            </a>
+        </div>
+
+        <a asp-controller="KesehatanSapi" asp-action="Index"
+           class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/10 transition">
+            <i class="fas fa-heartbeat w-5"></i>
+            <span>Kesehatan</span>
+        </a>
+
+        <a asp-controller="JadwalKegiatan" asp-action="Index"
+           class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/10 transition">
+            <i class="fas fa-calendar w-5"></i>
+            <span>Jadwal</span>
+        </a>
+
+        <a asp-controller="Report" asp-action="Index"
+           class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/10 transition">
+            <i class="fas fa-file-pdf w-5"></i>
+            <span>Laporan</span>
+        </a>
+
+        @if (User.IsInRole("Admin"))
+        {
+            <a asp-controller="UserManagement" asp-action="Index"
+               class="flex items-center gap-3 px-4 py-2.5 rounded-lg hover:bg-white/10 transition">
+                <i class="fas fa-user-cog w-5"></i>
+                <span>Manajemen User</span>
+            </a>
+        }
+    </nav>
+
+    <!-- LOGOUT -->
+    <div class="p-4 border-t border-white/10">
+        <form asp-controller="Account" asp-action="Logout" method="post">
+            <button
+                class="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg
+                       hover:bg-red-500/20 text-red-400 transition">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </form>
+    </div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<div class="ml-[260px] min-h-screen">
+
+    <!-- TOPBAR (FIXED) -->
+    <header
+        class="fixed top-0 left-[260px] right-0 z-40
+               h-16 bg-slate-900/80 backdrop-blur
+               border-b border-white/10
+               flex items-center justify-between px-6">
+
+        <h1 class="font-semibold tracking-wide text-slate-100">
+            @ViewData["Title"]
+        </h1>
+
+        <div class="flex items-center gap-5">
+            <button class="relative">
+                <i class="fas fa-bell text-slate-400 hover:text-white transition"></i>
+                <span class="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-blue-600 rounded-lg text-white
+                            flex items-center justify-center text-sm font-bold">
+                    @User.Identity?.Name?.Substring(0,1)
+                </div>
+                <span class="text-sm">@User.Identity?.Name</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="pt-24 px-6 pb-6 min-h-screen">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '@TempData["SuccessMessage"]',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <script>
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '@TempData["ErrorMessage"]',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+            </script>
+        }
+
+        @RenderBody()
+    </main>
+</div>
+
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>

@@ -1,0 +1,212 @@
+@using System.Security.Claims
+@model SimSapi.Models.JadwalKegiatan
+
+@{
+    ViewData["Title"] = "Detail Jadwal Kegiatan";
+
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var sudahDaftar = Model.Peserta.Any(p => p.UserId == userId);
+    var isAdmin = User.IsInRole("Admin");
+
+    var statusClass = Model.Status switch
+    {
+        "Terjadwal"   => "bg-sky-500/10 text-sky-400",
+        "Berlangsung" => "bg-emerald-500/10 text-emerald-400",
+        "Selesai"     => "bg-slate-500/10 text-slate-300",
+        "Dibatalkan"  => "bg-red-500/10 text-red-400",
+        _             => "bg-slate-500/10 text-slate-300"
+    };
+}
+
+<div class="max-w-6xl mx-auto space-y-6">
+
+<!-- ================= HEADER ================= -->
+<div class="relative bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow overflow-hidden">
+
+    <i class="fas fa-calendar-alt absolute left-6 top-1/2 -translate-y-1/2
+              text-[200px] text-sky-500/10 pointer-events-none"></i>
+
+    <div class="relative pl-2 md:pl-20 space-y-2">
+        <div class="flex flex-wrap items-center gap-3">
+            <span class="px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-300">
+                @Model.JenisKegiatan
+            </span>
+
+            <span class="px-3 py-1 rounded-full text-xs font-semibold @statusClass">
+                @Model.Status
+            </span>
+        </div>
+
+        <h1 class="text-2xl md:text-3xl font-bold text-white">
+            @Model.NamaKegiatan
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 text-slate-300">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-calendar-day text-sky-400"></i>
+                <div>
+                    <p class="text-xs text-slate-400">Tanggal</p>
+                    <p class="font-semibold">
+                        @Model.TanggalMulai.ToString("dd MMMM yyyy")
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <i class="fas fa-clock text-emerald-400"></i>
+                <div>
+                    <p class="text-xs text-slate-400">Waktu</p>
+                    <p class="font-semibold">
+                        @Model.TanggalMulai.ToString("HH:mm") -
+                        @Model.TanggalSelesai.ToString("HH:mm")
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <i class="fas fa-map-marker-alt text-amber-400"></i>
+                <div>
+                    <p class="text-xs text-slate-400">Lokasi</p>
+                    <p class="font-semibold">
+                        @(string.IsNullOrEmpty(Model.Lokasi) ? "-" : Model.Lokasi)
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CONTENT ================= -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+<!-- ===== MAIN ===== -->
+<div class="lg:col-span-2 space-y-6">
+
+    <!-- DESKRIPSI -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow">
+        <h3 class="text-slate-200 font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-align-left text-sky-400"></i>
+            Deskripsi Kegiatan
+        </h3>
+
+        <p class="text-slate-300 leading-relaxed whitespace-pre-line">
+            @Model.Deskripsi
+        </p>
+    </div>
+
+    <!-- PESERTA -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow">
+        <h3 class="text-slate-200 font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-users text-emerald-400"></i>
+            Daftar Peserta (@Model.Peserta.Count)
+        </h3>
+
+        @if (Model.Peserta.Any())
+        {
+            <div class="space-y-3">
+                @foreach (var peserta in Model.Peserta.OrderBy(p => p.User?.NamaLengkap))
+                {
+                    <div class="flex items-center justify-between
+                                bg-slate-950 border border-slate-800
+                                rounded-xl p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-800
+                                        flex items-center justify-center">
+                                <i class="fas fa-user text-slate-300"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-200 font-medium">
+                                    @peserta.User?.NamaLengkap
+                                </p>
+                                <p class="text-xs text-slate-400">
+                                    @peserta.User?.Email
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            @if (peserta.Hadir)
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs
+                                             bg-emerald-500/10 text-emerald-400">
+                                    <i class="fas fa-check"></i> Hadir
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 rounded-full text-xs
+                                             bg-slate-500/10 text-slate-400">
+                                    <i class="fas fa-clock"></i> Belum Absen
+                                </span>
+                            }
+
+                            @if (isAdmin)
+                            {
+                                <form asp-action="Absen"
+                                      asp-route-id="@Model.Id"
+                                      asp-route-userId="@peserta.UserId"
+                                      method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button class="text-sky-400 hover:text-sky-300">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="text-center py-10 text-slate-400">
+                <i class="fas fa-user-slash text-4xl mb-3 block"></i>
+                Belum ada peserta
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ===== SIDEBAR ===== -->
+<div class="space-y-6">
+
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow">
+        <h3 class="text-slate-200 font-semibold mb-4">
+            Aksi
+        </h3>
+
+        @if (!isAdmin)
+        {
+            @if (!sudahDaftar)
+            {
+                <form asp-action="Daftar" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button class="w-full bg-emerald-500/10 hover:bg-emerald-500/20
+                                   text-emerald-400 py-3 rounded-xl font-semibold transition">
+                        Daftar Kegiatan
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-action="BatalDaftar" asp-route-id="@Model.Id" method="post">
+                    @Html.AntiForgeryToken()
+                    <button class="w-full bg-red-500/10 hover:bg-red-500/20
+                                   text-red-400 py-3 rounded-xl font-semibold transition">
+                        Batal Daftar
+                    </button>
+                </form>
+            }
+        }
+
+        <a asp-action="Index"
+           class="block w-full bg-slate-800 hover:bg-slate-700
+                  text-slate-200 py-3 rounded-xl
+                  text-center font-semibold mt-4 transition">
+            Kembali
+        </a>
+    </div>
+</div>
+
+</div>
+</div>

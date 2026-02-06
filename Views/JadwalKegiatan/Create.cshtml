@@ -1,0 +1,186 @@
+@model SimSapi.Models.JadwalKegiatan
+@{
+    ViewData["Title"] = "Tambah Jadwal Kegiatan";
+}
+
+<div class="max-w-5xl mx-auto space-y-6">
+
+<!-- ================= HEADER ================= -->
+<div class="relative bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow overflow-hidden">
+
+    <!-- ICON BACKGROUND -->
+    <i class="fas fa-calendar-plus absolute left-6 top-1/2 -translate-y-1/2
+              text-[200px] text-emerald-500/10
+              pointer-events-none select-none"></i>
+
+    <div class="relative pl-2 md:pl-20">
+        <h2 class="text-xl font-bold text-white">
+            Tambah Jadwal Kegiatan
+        </h2>
+        <p class="text-slate-400 text-sm mt-1">
+            Buat jadwal kegiatan baru untuk peternak
+        </p>
+    </div>
+</div>
+
+<!-- ================= FORM ================= -->
+<div class="bg-slate-900 border border-slate-800 rounded-2xl shadow p-8">
+
+<form asp-action="Create" method="post" class="space-y-8">
+    <div asp-validation-summary="ModelOnly"
+         class="bg-red-500/10 border border-red-500/20
+                text-red-400 px-4 py-3 rounded-xl"></div>
+
+    <!-- ================= INFORMASI KEGIATAN ================= -->
+    <div>
+        <h3 class="text-slate-200 font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-info-circle text-sky-400"></i>
+            Informasi Kegiatan
+        </h3>
+
+        <div class="space-y-4">
+
+            <div>
+                <label asp-for="NamaKegiatan" class="block text-slate-300 mb-2">
+                    Nama Kegiatan
+                </label>
+                <input asp-for="NamaKegiatan"
+                       class="w-full bg-slate-950 border border-slate-800
+                              text-slate-200 rounded-xl px-4 py-2
+                              focus:outline-none focus:ring-2 focus:ring-sky-500"
+                       placeholder="Contoh: Vaksinasi Sapi Perah" />
+                <span asp-validation-for="NamaKegiatan" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div>
+                <label asp-for="Deskripsi" class="block text-slate-300 mb-2">
+                    Deskripsi
+                </label>
+                <textarea asp-for="Deskripsi" rows="4"
+                          class="w-full bg-slate-950 border border-slate-800
+                                 text-slate-200 rounded-xl px-4 py-2
+                                 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          placeholder="Jelaskan detail kegiatan..."></textarea>
+                <span asp-validation-for="Deskripsi" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="JenisKegiatan" class="block text-slate-300 mb-2">
+                        Jenis Kegiatan
+                    </label>
+                    <select asp-for="JenisKegiatan"
+                            class="w-full bg-slate-950 border border-slate-800
+                                   text-slate-200 rounded-xl px-4 py-2">
+                        <option>Umum</option>
+                        <option>Vaksinasi</option>
+                        <option>Pelatihan</option>
+                        <option>Rapat</option>
+                        <option>Pemeriksaan</option>
+                        <option>Sosialisasi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label asp-for="Status" class="block text-slate-300 mb-2">
+                        Status
+                    </label>
+                    <select asp-for="Status"
+                            class="w-full bg-slate-950 border border-slate-800
+                                   text-slate-200 rounded-xl px-4 py-2">
+                        <option>Terjadwal</option>
+                        <option>Berlangsung</option>
+                        <option>Selesai</option>
+                        <option>Dibatalkan</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= WAKTU & LOKASI ================= -->
+    <div>
+        <h3 class="text-slate-200 font-semibold mb-4 flex items-center gap-2">
+            <i class="fas fa-clock text-emerald-400"></i>
+            Waktu & Lokasi
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label asp-for="TanggalMulai" class="block text-slate-300 mb-2">
+                    Tanggal & Waktu Mulai
+                </label>
+                <input asp-for="TanggalMulai" type="datetime-local"
+                       class="w-full bg-slate-950 border border-slate-800
+                              text-slate-200 rounded-xl px-4 py-2" />
+            </div>
+
+            <div>
+                <label asp-for="TanggalSelesai" class="block text-slate-300 mb-2">
+                    Tanggal & Waktu Selesai
+                </label>
+                <input asp-for="TanggalSelesai" type="datetime-local"
+                       class="w-full bg-slate-950 border border-slate-800
+                              text-slate-200 rounded-xl px-4 py-2" />
+            </div>
+
+            <div>
+                <label asp-for="Lokasi" class="block text-slate-300 mb-2">
+                    Lokasi
+                </label>
+                <input asp-for="Lokasi"
+                       class="w-full bg-slate-950 border border-slate-800
+                              text-slate-200 rounded-xl px-4 py-2"
+                       placeholder="Contoh: Balai Desa" />
+            </div>
+
+            <div>
+                <label asp-for="PenanggungJawab" class="block text-slate-300 mb-2">
+                    Penanggung Jawab
+                </label>
+                <input asp-for="PenanggungJawab"
+                       class="w-full bg-slate-950 border border-slate-800
+                              text-slate-200 rounded-xl px-4 py-2"
+                       placeholder="Nama penanggung jawab" />
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= INFO BOX ================= -->
+    <div class="bg-sky-500/10 border border-sky-500/20 rounded-xl p-4">
+        <div class="flex gap-3 text-slate-300 text-sm">
+            <i class="fas fa-info-circle text-sky-400 mt-1"></i>
+            <ul class="list-disc list-inside space-y-1">
+                <li>Jadwal akan langsung terlihat oleh peternak</li>
+                <li>Peternak dapat mendaftar melalui halaman detail</li>
+                <li>Kehadiran peserta dapat dikelola kemudian</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- ================= ACTION ================= -->
+    <div class="flex flex-col md:flex-row gap-4">
+        <button type="submit"
+                class="flex-1 bg-sky-500/10 hover:bg-sky-500/20
+                       text-sky-400 py-3 rounded-xl
+                       flex items-center justify-center gap-2 font-semibold transition">
+            <i class="fas fa-calendar-plus"></i>
+            Simpan Jadwal
+        </button>
+
+        <a asp-action="Index"
+           class="flex-1 bg-slate-800 hover:bg-slate-700
+                  text-slate-200 py-3 rounded-xl
+                  flex items-center justify-center gap-2 font-semibold transition">
+            <i class="fas fa-arrow-left"></i>
+            Kembali
+        </a>
+    </div>
+
+</form>
+</div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

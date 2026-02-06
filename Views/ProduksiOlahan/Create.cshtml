@@ -1,0 +1,202 @@
+@model SimSapi.Models.ProduksiOlahan
+@{
+    ViewData["Title"] = "Tambah Produksi Olahan";
+}
+
+<div class="max-w-4xl mx-auto space-y-6">
+
+    <!-- ================= HEADER ================= -->
+    <div class="relative bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow overflow-hidden">
+
+        <!-- ICON PRODUK (BACKGROUND KIRI) -->
+        <i class="fas fa-cookie-bite absolute left-6 top-1/2 -translate-y-1/2
+                  text-[180px] text-orange-500/10
+                  pointer-events-none select-none"></i>
+
+        <div class="relative pl-2 md:pl-20">
+            <h3 class="text-2xl font-bold text-white">Tambah Produksi Olahan</h3>
+            <p class="text-slate-400 text-sm">Input data produk olahan susu</p>
+        </div>
+    </div>
+
+    <!-- ================= FORM ================= -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow p-8">
+
+        <form asp-action="Create" method="post" class="space-y-6">
+            <div asp-validation-summary="ModelOnly" class="bg-red-950/30 border border-red-800 text-red-400 px-4 py-3 rounded-2xl"></div>
+
+            <!-- Informasi Produk -->
+            <div class="border-b border-slate-800 pb-4 mb-6">
+                <h4 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fas fa-box text-orange-500"></i>
+                    Informasi Produk
+                </h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="NamaProduk" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-tag text-slate-500"></i> Nama Produk
+                    </label>
+                    <input asp-for="NamaProduk" placeholder="Contoh: Yogurt Strawberry 200ml"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="NamaProduk" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="JenisOlahan" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-list text-slate-500"></i> Jenis Olahan
+                    </label>
+                    <select asp-for="JenisOlahan" class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                                   focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="0">Yogurt</option>
+                        <option value="1">Keju</option>
+                        <option value="2">Susu Pasteurisasi</option>
+                        <option value="3">Mentega</option>
+                        <option value="4">Es Krim</option>
+                        <option value="5">Kefir</option>
+                        <option value="6">Susu Bubuk</option>
+                        <option value="99">Lainnya</option>
+                    </select>
+                    <span asp-validation-for="JenisOlahan" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                <div>
+                    <label asp-for="JumlahProduksi" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-weight text-slate-500"></i> Jumlah Produksi
+                    </label>
+                    <input asp-for="JumlahProduksi" type="number" step="0.01" placeholder="0.00"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="JumlahProduksi" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="Satuan" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-balance-scale text-slate-500"></i> Satuan
+                    </label>
+                    <select asp-for="Satuan" class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                                  focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="Kg">Kg (Kilogram)</option>
+                        <option value="Liter">Liter</option>
+                        <option value="Pcs">Pcs (Pieces)</option>
+                        <option value="Pack">Pack</option>
+                        <option value="Box">Box</option>
+                    </select>
+                    <span asp-validation-for="Satuan" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="BahanBakuSusu" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-fill-drip text-slate-500"></i> Bahan Baku Susu (L)
+                    </label>
+                    <input asp-for="BahanBakuSusu" type="number" step="0.01" placeholder="0.00"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="BahanBakuSusu" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- Tanggal & Status -->
+            <div class="border-b border-slate-800 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fas fa-calendar text-orange-500"></i> Tanggal & Status
+                </h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label asp-for="TanggalProduksi" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-calendar-day text-slate-500"></i> Tanggal Produksi
+                    </label>
+                    <input asp-for="TanggalProduksi" type="date"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="TanggalProduksi" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TanggalKadaluarsa" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-calendar-times text-slate-500"></i> Tanggal Kadaluarsa
+                    </label>
+                    <input asp-for="TanggalKadaluarsa" type="date"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="TanggalKadaluarsa" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="StatusProduksi" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-check-circle text-slate-500"></i> Status
+                    </label>
+                    <select asp-for="StatusProduksi" class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                                       focus:outline-none focus:ring-2 focus:ring-orange-500">
+                        <option value="Tersedia">Tersedia</option>
+                        <option value="Terjual">Terjual</option>
+                        <option value="Kadaluarsa">Kadaluarsa</option>
+                    </select>
+                    <span asp-validation-for="StatusProduksi" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <!-- Biaya & Harga -->
+            <div class="border-b border-slate-800 pb-4 mb-6 mt-8">
+                <h4 class="text-lg font-semibold text-white flex items-center gap-2">
+                    <i class="fas fa-money-bill-wave text-orange-500"></i> Biaya & Harga
+                </h4>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label asp-for="BiayaProduksi" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-coins text-slate-500"></i> Biaya Produksi (Rp)
+                    </label>
+                    <input asp-for="BiayaProduksi" type="number" step="0.01" placeholder="0"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="BiayaProduksi" class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="HargaJual" class="block text-slate-300 font-medium mb-2">
+                        <i class="fas fa-tag text-slate-500"></i> Harga Jual (Rp)
+                    </label>
+                    <input asp-for="HargaJual" type="number" step="0.01" placeholder="0"
+                           class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                  focus:outline-none focus:ring-2 focus:ring-orange-500" />
+                    <span asp-validation-for="HargaJual" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <div>
+                <label asp-for="Keterangan" class="block text-slate-300 font-medium mb-2">
+                    <i class="fas fa-sticky-note text-slate-500"></i> Keterangan (Opsional)
+                </label>
+                <textarea asp-for="Keterangan" rows="3"
+                          class="w-full px-4 py-2 rounded-2xl bg-slate-950 border border-slate-800 text-slate-200
+                                 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          placeholder="Catatan tambahan..."></textarea>
+                <span asp-validation-for="Keterangan" class="text-red-400 text-sm"></span>
+            </div>
+
+            <!-- BUTTON -->
+            <div class="flex gap-4 mt-4">
+                <button type="submit"
+                        class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-3 rounded-2xl transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-save"></i> Simpan
+                </button>
+                <a asp-action="Index"
+                   class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-2xl transition flex items-center justify-center gap-2 font-medium">
+                    <i class="fas fa-arrow-left"></i> Batal
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

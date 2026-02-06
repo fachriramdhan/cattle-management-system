@@ -1,0 +1,140 @@
+@model SimSapi.Models.Sapi
+@{
+    ViewData["Title"] = "Tambah Sapi";
+}
+
+<div class="max-w-3xl mx-auto space-y-6">
+
+    <!-- ================= HEADER ================= -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow">
+        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fas fa-cow text-emerald-400"></i>
+            Tambah Data Sapi
+        </h2>
+        <p class="text-slate-400 text-sm mt-1">
+            Lengkapi data sapi dengan benar sebelum menyimpan
+        </p>
+    </div>
+
+    <!-- ================= FORM ================= -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow p-6">
+        <form asp-action="Create" method="post" class="space-y-6">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="bg-red-500/10 text-red-400 px-4 py-3 rounded-xl text-sm">
+            </div>
+
+            <!-- ================= BASIC INFO ================= -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                    <label asp-for="KodeSapi"
+                           class="block text-slate-300 font-medium mb-2">
+                        Kode Sapi
+                    </label>
+                    <input asp-for="KodeSapi"
+                           placeholder="SP-001"
+                           class="w-full bg-slate-950 border border-slate-800 text-slate-200
+                                  rounded-xl px-4 py-2
+                                  focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                    <span asp-validation-for="KodeSapi"
+                          class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="NamaSapi"
+                           class="block text-slate-300 font-medium mb-2">
+                        Nama Sapi
+                    </label>
+                    <input asp-for="NamaSapi"
+                           placeholder="Bella"
+                           class="w-full bg-slate-950 border border-slate-800 text-slate-200
+                                  rounded-xl px-4 py-2
+                                  focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                    <span asp-validation-for="NamaSapi"
+                          class="text-red-400 text-sm"></span>
+                </div>
+
+            </div>
+
+            <!-- ================= DETAIL INFO ================= -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <div>
+                    <label asp-for="JenisKelamin"
+                           class="block text-slate-300 font-medium mb-2">
+                        Jenis Kelamin
+                    </label>
+                    <select asp-for="JenisKelamin"
+                            class="w-full bg-slate-950 border border-slate-800 text-slate-200
+                                   rounded-xl px-4 py-2">
+                        <option value="0">Jantan</option>
+                        <option value="1">Betina</option>
+                    </select>
+                    <span asp-validation-for="JenisKelamin"
+                          class="text-red-400 text-sm"></span>
+                </div>
+
+                <div>
+                    <label asp-for="TanggalLahir"
+                           class="block text-slate-300 font-medium mb-2">
+                        Tanggal Lahir
+                    </label>
+                    <input asp-for="TanggalLahir"
+                           type="date"
+                           class="w-full bg-slate-950 border border-slate-800 text-slate-200
+                                  rounded-xl px-4 py-2
+                                  focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                    <span asp-validation-for="TanggalLahir"
+                          class="text-red-400 text-sm"></span>
+                </div>
+
+            </div>
+
+            <!-- ================= STATUS ================= -->
+            <div>
+                <label asp-for="StatusSapi"
+                       class="block text-slate-300 font-medium mb-2">
+                    Status Sapi
+                </label>
+                <select asp-for="StatusSapi"
+                        class="w-full bg-slate-950 border border-slate-800 text-slate-200
+                               rounded-xl px-4 py-2">
+                    <option value="Aktif">Aktif</option>
+                    <option value="Dijual">Dijual</option>
+                    <option value="Sakit">Sakit</option>
+                    <option value="Mati">Mati</option>
+                </select>
+                <span asp-validation-for="StatusSapi"
+                      class="text-red-400 text-sm"></span>
+            </div>
+
+            <!-- ================= ACTION ================= -->
+            <div class="flex gap-4 pt-4">
+
+                <button type="submit"
+                        class="flex-1 bg-sky-500/10 text-sky-400
+                               hover:bg-sky-500/20
+                               rounded-xl py-3
+                               flex items-center justify-center gap-2 transition">
+                    <i class="fas fa-save"></i>
+                    Simpan
+                </button>
+
+                <a asp-action="Index"
+                   class="flex-1 bg-slate-800 hover:bg-slate-700 text-white
+                          rounded-xl py-3
+                          flex items-center justify-center gap-2 transition">
+                    <i class="fas fa-arrow-left"></i>
+                    Kembali
+                </a>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

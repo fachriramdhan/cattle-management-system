@@ -1,0 +1,289 @@
+@model IEnumerable<SimSapi.Models.KesehatanSapi>
+@{
+    ViewData["Title"] = "Kesehatan Sapi";
+}
+
+<!-- Header Actions -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+            <h3 class="text-xl font-bold text-gray-800">Riwayat Kesehatan Sapi</h3>
+            <p class="text-gray-600 text-sm mt-1">Kelola riwayat pemeriksaan, vaksinasi, dan pengobatan sapi</p>
+        </div>
+        <a asp-action="Create" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Tambah Riwayat
+        </a>
+    </div>
+    
+    <!-- Filters -->
+    <form method="get" class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select name="sapiId" asp-items="ViewBag.SapiList" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">Semua Sapi</option>
+        </select>
+        
+        <select name="jenis" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">Semua Jenis Pemeriksaan</option>
+            <option value="Pemeriksaan_Rutin" selected="@(ViewData["Jenis"]?.ToString() == "Pemeriksaan_Rutin")">Pemeriksaan Rutin</option>
+            <option value="Vaksinasi" selected="@(ViewData["Jenis"]?.ToString() == "Vaksinasi")">Vaksinasi</option>
+            <option value="Pengobatan" selected="@(ViewData["Jenis"]?.ToString() == "Pengobatan")">Pengobatan</option>
+            <option value="Pemeriksaan_Kebuntingan" selected="@(ViewData["Jenis"]?.ToString() == "Pemeriksaan_Kebuntingan")">Pemeriksaan Kebuntingan</option>
+            <option value="Pemeriksaan_Pasca_Melahirkan" selected="@(ViewData["Jenis"]?.ToString() == "Pemeriksaan_Pasca_Melahirkan")">Pasca Melahirkan</option>
+            <option value="Pemeriksaan_Darurat" selected="@(ViewData["Jenis"]?.ToString() == "Pemeriksaan_Darurat")">Darurat</option>
+            <option value="Kastrasi" selected="@(ViewData["Jenis"]?.ToString() == "Kastrasi")">Kastrasi</option>
+            <option value="Lainnya" selected="@(ViewData["Jenis"]?.ToString() == "Lainnya")">Lainnya</option>
+        </select>
+        
+        <select name="status" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500">
+            <option value="">Semua Status</option>
+            <option value="Sehat" selected="@(ViewData["Status"]?.ToString() == "Sehat")">Sehat</option>
+            <option value="Sakit" selected="@(ViewData["Status"]?.ToString() == "Sakit")">Sakit</option>
+            <option value="Dalam Perawatan" selected="@(ViewData["Status"]?.ToString() == "Dalam Perawatan")">Dalam Perawatan</option>
+            <option value="Sembuh" selected="@(ViewData["Status"]?.ToString() == "Sembuh")">Sembuh</option>
+        </select>
+        
+        <button type="submit" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg transition flex items-center justify-center gap-2">
+            <i class="fas fa-filter"></i>
+            Filter
+        </button>
+    </form>
+</div>
+
+<!-- Summary Cards -->
+@if (Model.Any())
+{
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="bg-gradient-to-r from-red-500 to-red-600 rounded-lg shadow-md p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-red-100 text-sm">Total Pemeriksaan</p>
+                    <p class="text-3xl font-bold mt-2">@Model.Count()</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <i class="fas fa-heartbeat text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-md p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-green-100 text-sm">Sehat</p>
+                    <p class="text-3xl font-bold mt-2">@Model.Count(k => k.StatusKesehatan == "Sehat")</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <i class="fas fa-smile text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg shadow-md p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-yellow-100 text-sm">Dalam Perawatan</p>
+                    <p class="text-3xl font-bold mt-2">@Model.Count(k => k.StatusKesehatan == "Dalam Perawatan")</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <i class="fas fa-hospital text-2xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg shadow-md p-6 text-white">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-orange-100 text-sm">Total Biaya</p>
+                    <!-- ⭐ FIX: Tambahkan ! setelah BiayaPengobatan -->
+                    <p class="text-2xl font-bold mt-2">Rp @Model.Sum(k => k.BiayaPengobatan.GetValueOrDefault()).ToString("N0")</p>
+                </div>
+                <div class="bg-white bg-opacity-20 rounded-full p-4">
+                    <i class="fas fa-money-bill-wave text-2xl"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Timeline Cards -->
+@if (Model.Any())
+{
+    <div class="space-y-4">
+        @foreach (var item in Model)
+        {
+            var statusClass = item.StatusKesehatan switch
+            {
+                "Sehat" => "border-green-500 bg-green-50",
+                "Sakit" => "border-red-500 bg-red-50",
+                "Dalam Perawatan" => "border-yellow-500 bg-yellow-50",
+                "Sembuh" => "border-blue-500 bg-blue-50",
+                _ => "border-gray-500 bg-gray-50"
+            };
+
+            var statusBadgeClass = item.StatusKesehatan switch
+            {
+                "Sehat" => "bg-green-100 text-green-800",
+                "Sakit" => "bg-red-100 text-red-800",
+                "Dalam Perawatan" => "bg-yellow-100 text-yellow-800",
+                "Sembuh" => "bg-blue-100 text-blue-800",
+                _ => "bg-gray-100 text-gray-800"
+            };
+
+            var jenisIcon = item.JenisPemeriksaan switch
+            {
+                SimSapi.Models.JenisPemeriksaan.Vaksinasi => "fa-syringe",
+                SimSapi.Models.JenisPemeriksaan.Pengobatan => "fa-pills",
+                SimSapi.Models.JenisPemeriksaan.Pemeriksaan_Darurat => "fa-ambulance",
+                _ => "fa-stethoscope"
+            };
+
+            <div class="bg-white rounded-lg shadow-md border-l-4 @statusClass p-6 hover:shadow-lg transition">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- Left: Icon & Date -->
+                    <div class="flex-shrink-0 text-center">
+                        <div class="bg-red-100 rounded-full p-4 inline-block mb-2">
+                            <i class="fas @jenisIcon text-red-600 text-2xl"></i>
+                        </div>
+                        <p class="text-xs text-gray-500">@item.TanggalPemeriksaan.ToString("dd MMM yyyy")</p>
+                        <p class="text-xs text-gray-400">@item.TanggalPemeriksaan.ToString("HH:mm")</p>
+                    </div>
+                    
+                    <!-- Middle: Content -->
+                    <div class="flex-1">
+                        <div class="flex items-start justify-between mb-3">
+                            <div>
+                                <h4 class="text-lg font-bold text-gray-800 flex items-center gap-2">
+                                    @item.Sapi?.NamaSapi 
+                                    <span class="text-sm text-gray-500 font-normal">(@item.Sapi?.KodeSapi)</span>
+                                </h4>
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 rounded text-xs">
+                                        @item.JenisPemeriksaan.ToString().Replace("_", " ")
+                                    </span>
+                                </p>
+                            </div>
+                            <span class="px-3 py-1 @statusBadgeClass rounded-full text-xs font-medium">
+                                @item.StatusKesehatan
+                            </span>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                            <div>
+                                <p class="text-sm text-gray-600">
+                                    <i class="fas fa-diagnoses text-gray-400"></i>
+                                    <strong>Diagnosa:</strong> @item.Diagnosa
+                                </p>
+                                @if (!string.IsNullOrEmpty(item.Gejala))
+                                {
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <i class="fas fa-notes-medical text-gray-400"></i>
+                                        <strong>Gejala:</strong> @item.Gejala
+                                    </p>
+                                }
+                            </div>
+                            
+                            <div>
+                                @if (!string.IsNullOrEmpty(item.NamaDokter))
+                                {
+                                    <p class="text-sm text-gray-600">
+                                        <i class="fas fa-user-md text-gray-400"></i>
+                                        <strong>Dokter:</strong> @item.NamaDokter
+                                    </p>
+                                }
+                                @if (item.BiayaPengobatan.HasValue)
+                                {
+                                    <p class="text-sm text-gray-600 mt-1">
+                                        <i class="fas fa-money-bill text-gray-400"></i>
+                                        <strong>Biaya:</strong> Rp @item.BiayaPengobatan.Value.ToString("N0")
+                                    </p>
+                                }
+                            </div>
+                        </div>
+                        
+                        @if (item.BeratBadan.HasValue || item.SuhuTubuh.HasValue)
+                        {
+                            <div class="flex gap-4 text-sm text-gray-600 mb-3">
+                                @if (item.BeratBadan.HasValue)
+                                {
+                                    <span>
+                                        <i class="fas fa-weight text-gray-400"></i>
+                                        <strong>Berat:</strong> @item.BeratBadan.Value kg
+                                    </span>
+                                }
+                                @if (item.SuhuTubuh.HasValue)
+                                {
+                                    <span>
+                                        <i class="fas fa-thermometer-half text-gray-400"></i>
+                                        <strong>Suhu:</strong> @item.SuhuTubuh.Value °C
+                                    </span>
+                                }
+                            </div>
+                        }
+                        
+                        @if (!string.IsNullOrEmpty(item.Obat))
+                        {
+                            <div class="bg-blue-50 border border-blue-200 rounded p-3 text-sm text-blue-800 mb-3">
+                                <i class="fas fa-pills"></i>
+                                <strong>Obat:</strong> @item.Obat
+                            </div>
+                        }
+                        
+                        @if (item.TanggalKontrol.HasValue)
+                        {
+                            <p class="text-sm text-orange-600">
+                                <i class="fas fa-calendar-check"></i>
+                                <strong>Jadwal Kontrol:</strong> @item.TanggalKontrol.Value.ToString("dd MMMM yyyy")
+                            </p>
+                        }
+                    </div>
+                    
+                    <!-- Right: Actions -->
+                    <div class="flex-shrink-0 flex md:flex-col gap-2">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fas fa-edit"></i>
+                            Edit
+                        </a>
+                        <button onclick="confirmDelete(@item.Id)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2 text-sm">
+                            <i class="fas fa-trash"></i>
+                            Hapus
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="bg-white rounded-lg shadow-md p-12 text-center">
+        <i class="fas fa-heartbeat text-6xl text-gray-300 mb-4"></i>
+        <p class="text-gray-500 text-lg">Tidak ada riwayat kesehatan sapi</p>
+    </div>
+}
+
+<!-- Delete Form (Hidden) -->
+<form id="deleteForm" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id) {
+            Swal.fire({
+                title: 'Hapus Riwayat?',
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.getElementById('deleteForm');
+                    form.action = '/KesehatanSapi/Delete/' + id;
+                    form.submit();
+                }
+            });
+        }
+    </script>
+}
