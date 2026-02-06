@@ -492,16 +492,6 @@ ConnectionStrings__DefaultConnection="Server=prod-server;Database=db_simsapi;Use
 
 ---
 
-## 🤝 Contributing
-
-Kontribusi sangat diterima! Silakan ikuti langkah berikut:
-
-1. Fork repository ini
-2. Buat branch baru (`git checkout -b feature/AmazingFeature`)
-3. Commit perubahan Anda (`git commit -m 'Add some AmazingFeature'`)
-4. Push ke branch (`git push origin feature/AmazingFeature`)
-5. Buat Pull Request
-
 ### Code Style Guide
 
 - Gunakan PascalCase untuk class dan method names
