@@ -1,4 +1,4 @@
-# 🐄 SIM-SAPI - Sistem Informasi Manajemen Sapi Perah
+# 🐄 Cattle Management System - Sistem Informasi Manajemen Sapi Perah
 
 <div align="center">
 
@@ -18,7 +18,7 @@
 
 ## 📋 Deskripsi
 
-**SIM-SAPI** adalah sistem informasi manajemen peternakan sapi perah berbasis web yang dibangun dengan ASP.NET Core 8.0 dan MySQL. Aplikasi ini dirancang untuk membantu peternak dan administrator dalam mengelola data sapi, produksi susu, produksi olahan, kesehatan sapi, dan jadwal kegiatan dengan antarmuka yang modern dan responsif.
+**Cattle Management System** adalah sistem informasi manajemen peternakan sapi perah berbasis web yang dibangun dengan ASP.NET Core 8.0 dan MySQL. Aplikasi ini dirancang untuk membantu peternak dan administrator dalam mengelola data sapi, produksi susu, produksi olahan, kesehatan sapi, dan jadwal kegiatan dengan antarmuka yang modern dan responsif.
 
 ### 🎯 Tujuan Proyek
 
