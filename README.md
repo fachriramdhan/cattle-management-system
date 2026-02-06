@@ -1,4 +1,5 @@
-# 🐄 Cattle Management System 
+# <h1 align="center">🐄 Cattle Management System</h1>
+
 
 <div align="center">
 
