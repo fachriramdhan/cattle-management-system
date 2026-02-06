@@ -578,7 +578,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ```
 MIT License
 
-Copyright (c) 2026 SIM-SAPI
+Copyright (c) 2026 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -605,8 +605,8 @@ SOFTWARE.
 
 **Your Name**
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/yourprofile)
+- GitHub: [@yourusername](https://github.com/fachriramdhan)
+- LinkedIn: [Your LinkedIn](https://linkedin.com/in/fachriramdhan)
 - Email: your.email@example.com
 
 ---
@@ -620,25 +620,6 @@ SOFTWARE.
 - [Chart.js](https://www.chartjs.org)
 - [Font Awesome](https://fontawesome.com)
 - [SweetAlert2](https://sweetalert2.github.io)
-
----
-
-## 📞 Support
-
-Jika Anda memerlukan bantuan, silakan:
-
-- 📧 Email: support@simsapi.com
-- 💬 Discord: [Join our Discord](https://discord.gg/simsapi)
-- 📖 Documentation: [Wiki](https://github.com/username/sim-sapi/wiki)
-- ❓ FAQ: [Frequently Asked Questions](https://github.com/username/sim-sapi/wiki/FAQ)
-
----
-
-## ⭐ Star History
-
-Jika project ini bermanfaat, jangan lupa berikan ⭐ star!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=username/sim-sapi&type=Date)](https://star-history.com/#username/sim-sapi&Date)
 
 ---
 
