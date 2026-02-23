@@ -1,0 +1,3 @@
+*.cshtml linguist-language=Razor
+*.aspx linguist-language=ASP
+*.ascx linguist-language=ASP
